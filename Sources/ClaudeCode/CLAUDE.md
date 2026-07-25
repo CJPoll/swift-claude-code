@@ -11,6 +11,22 @@ tagging forward, never by moving a tag out from under a resolved
 
 ## Patterns
 
+### Never declare a type named `ClaudeCode`
+
+The module is already called that, and a public type of the same name shadows
+it everywhere. `ClaudeCode.SessionOptions` in a consumer then resolves to the
+*type* and fails to compile — and, worse, a consumer that declares its own
+`JSONValue` (KodeMonkee does) gets its own silently, with no syntax left to
+name ours.
+
+0.1.0 shipped exactly that: a `public enum ClaudeCode` namespace marker, left
+over from the first source file the target ever had. Removed in 0.1.1.
+`ClaudeCodeTests.swift` guards it — it qualifies through the module name with
+a plain `import`, so reintroducing the shadow stops the suite compiling.
+
+Swift has no "namespace" construct separate from types. The module *is* the
+namespace; nothing needs to be declared to get one.
+
 ### JSON modeling
 
 - Use `JSONValue` (in `JSONValue.swift`) for any field whose shape is not

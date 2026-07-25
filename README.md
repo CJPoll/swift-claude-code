@@ -38,10 +38,14 @@ that has not been rebuilt.
 ## Installation
 
 ```swift
-.package(url: "https://github.com/CJPoll/swift-claude-code", exact: "0.1.0")
+.package(url: "https://github.com/CJPoll/swift-claude-code", exact: "0.1.1")
 ```
 
 and add `"ClaudeCode"` to your target's dependencies.
+
+> **0.1.0 is not recommended.** It declared a `public enum ClaudeCode`, which
+> shadowed the module name and made `ClaudeCode.SomeType` unwritable in a
+> consumer. Removed in 0.1.1; nothing else changed.
 
 ## Usage
 
