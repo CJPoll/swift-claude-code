@@ -4,6 +4,11 @@ Pure CLI client library for `claude -p`. **No UI framework, no consuming
 app's types, no UI concepts.** This package is consumed by more than one
 app; anything app-specific belongs in the app, not here.
 
+Published publicly at `github.com/CJPoll/swift-claude-code`. Consumers pin
+it by exact version, so **a released tag is immutable** — fix a mistake by
+tagging forward, never by moving a tag out from under a resolved
+`Package.resolved`.
+
 ## Patterns
 
 ### JSON modeling
@@ -134,6 +139,36 @@ Where such an enum is exhaustively mapped in a loop-driven test, conform
 it to `CaseIterable` and assert `allCases` against the expected list. The
 mapping test only covers the levels it names, so a newly added case
 otherwise passes untested.
+
+### Verifying a release
+
+`git push` plus `git push --tags` proves the objects left the machine. It
+does **not** prove the package is consumable — a wrong product name, a
+`platforms:` floor above the consumer's, or a tag that resolves to the
+wrong commit all survive that check and fail later in whatever repo tries
+to depend on it.
+
+Verify a release by resolving it the way a consumer will: a throwaway
+package in `/tmp` whose manifest pins the **published URL** at the exact
+version, with one source file that imports `ClaudeCode` and touches the
+API the next task needs, then `swift build`. This exercises the remote
+fetch, the version resolution and the module interface in one step. Delete
+it afterwards.
+
+### README samples are typechecked, not written from memory
+
+Sample code in the README is API documentation, and a sample that does not
+compile is worse than none. Check one by extracting it into a scratch file
+and typechecking it against the built module:
+
+```
+swift build
+swiftc -typecheck -swift-version 6 -target arm64-apple-macosx14.0 \
+  -I .build/arm64-apple-macosx/debug/Modules /tmp/sample.swift
+```
+
+This caught `await session.events` in the first draft — `events` is
+`nonisolated`, so the `await` is wrong.
 
 ### stdin envelope
 
