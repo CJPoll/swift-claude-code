@@ -345,11 +345,21 @@ final class CommandBuilderTests: XCTestCase {
             (SessionOptions.Effort.low, "low"),
             (.medium, "medium"),
             (.high, "high"),
+            (.xhigh, "xhigh"),
             (.max, "max")
         ] {
             let cmd = try build(SessionOptions(effort: level))
             assertContainsSequence(cmd.arguments, ["--effort", expected])
         }
+    }
+
+    /// Guards the list above against a case added to `Effort` but not covered
+    /// here — the mapping is only verified for levels the loop names.
+    func testEveryEffortLevelIsCovered() throws {
+        XCTAssertEqual(
+            SessionOptions.Effort.allCases,
+            [.low, .medium, .high, .xhigh, .max]
+        )
     }
 
     // MARK: - Agent / agents / name

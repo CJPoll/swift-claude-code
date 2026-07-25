@@ -118,8 +118,22 @@ The suite is split across **two runners**, and each reports its own total:
 So the trailing line of `swift test` is **not** the whole count. When
 checking that a move or refactor dropped nothing, compare *both* numbers
 against the baseline — a whole file failing to compile into the bundle can
-otherwise look like a green run. As of the extraction the baseline is
-**27 swift-testing + 79 XCTest**.
+otherwise look like a green run. The baseline is **27 swift-testing + 80
+XCTest**; bump this line when you add tests.
+
+### Enumerated flag values come from the CLI, not the docs
+
+Enums that model a fixed set of CLI flag values (`Effort`,
+`PermissionMode`, …) are only correct if they match the installed
+`claude`. `Effort` was missing `xhigh` for exactly this reason — it is
+accepted by the CLI and absent from the published docs. Verify a value
+set by running `claude --help` (or the flag with a bogus value, which
+prints the accepted list) before adding or trusting cases.
+
+Where such an enum is exhaustively mapped in a loop-driven test, conform
+it to `CaseIterable` and assert `allCases` against the expected list. The
+mapping test only covers the levels it names, so a newly added case
+otherwise passes untested.
 
 ### stdin envelope
 

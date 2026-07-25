@@ -56,10 +56,13 @@ public struct SessionOptions: Sendable, Equatable {
     }
 
     /// Reasoning effort level.
-    public enum Effort: Sendable, Equatable {
+    /// Cases are declared in ascending order of effort, which is the order a
+    /// consumer should present them in.
+    public enum Effort: Sendable, Equatable, CaseIterable {
         case low
         case medium
         case high
+        case xhigh
         case max
 
         var argValue: String {
@@ -67,6 +70,7 @@ public struct SessionOptions: Sendable, Equatable {
             case .low: return "low"
             case .medium: return "medium"
             case .high: return "high"
+            case .xhigh: return "xhigh"
             case .max: return "max"
             }
         }
